@@ -146,6 +146,33 @@ colorful-menu.nvim. The label and the part for the right side (a signature, a
 type) are kept apart in the `UserData` (`luasrc.Ref`) with their highlights,
 for a UI that lays them out and colors them.
 
+### The UI luasrcpum
+
+The UIs bundled with goda-cmp.vim do not draw highlights. `ext/ui/luasrcpum`
+is a UI that shows candidates with pum.vim as the UI "pum" does, and also
+draws what is in `luasrc.Ref`: the label with the highlights of
+colorful-menu.nvim, and the signature or type aligned to the right. Candidates
+of other sources are shown as the UI "pum" shows them; selecting, confirming
+and the preview are left to it.
+
+```go
+b.AddUI(luasrcpum.New())
+b.PatchGlobal(cmp.Config{UI: "luasrcpum"})
+```
+
+| Param | Default | |
+|---|---|---|
+| `insert` | `false` | the UI "pum"'s |
+| `abbrMaxWidth` | `50` | the display width the label and the detail are fitted in |
+| `detailMinGap` | `3` | the least number of spaces between the label and the detail |
+| `detailMinWidth` | `8` | the detail is not shown when less of it fits |
+| `detailHighlight` | `"Comment"` | the highlight of a detail without highlights of its own |
+
+pum.vim computes the positions of the highlights from the width of the label
+before it widens or cuts it to fit `min_width` and `max_width`, so the colors
+shift. Leave those unset, and set `max_columns.abbr` of pum.vim to
+`abbrMaxWidth`: the label is cut by this UI.
+
 ## How it works
 
 The sources run in Lua, and Go waits for them asynchronously:
@@ -177,6 +204,13 @@ done({source, bufnr, request, index})   (no reply)
 into an item, `info()` makes its Markdown, and `remember()` / `entry()` keep the
 original data to resolve and confirm. `nvimlsp.lua` and `blink.lua` are
 examples.
+
+## Demo
+
+`demo/record.sh` records the demo of the UI luasrcpum with a minimal
+configuration (`demo/init.lua`, `demo/config`): Neovim, gopls and the plugins
+it clones, typing into `demo/sample/main.go`. It needs asciinema, agg and
+ffmpeg, and writes `demo/out/`.
 
 ## License
 

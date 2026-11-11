@@ -119,6 +119,25 @@ require("goda_cmp_luasrc.blink").setup {
 
 インストールされていれば、LSP の候補の表示を colorful-menu.nvim で組み立てる。表示と、右に寄せる部分 (シグネチャ、型) は、それぞれの色と一緒に `UserData` (`luasrc.Ref`) に分けて置く。並べて色を付ける UI が使える。
 
+### UI luasrcpum
+
+goda-cmp.vim に同梱の UI は色を描かない。`ext/ui/luasrcpum` は、UI "pum" と同じく pum.vim で候補を出し、加えて `luasrc.Ref` の中身を描く UI。colorful-menu.nvim の色を付けた表示と、右に寄せたシグネチャや型を出す。ほかのソースの候補は UI "pum" と同じに出し、選択・確定・プレビューは UI "pum" に任せる。
+
+```go
+b.AddUI(luasrcpum.New())
+b.PatchGlobal(cmp.Config{UI: "luasrcpum"})
+```
+
+| パラメータ | 既定値 | |
+|---|---|---|
+| `insert` | `false` | UI "pum" のもの |
+| `abbrMaxWidth` | `50` | 表示と右に寄せる部分を収める表示幅 |
+| `detailMinGap` | `3` | 表示と右に寄せる部分の間の最小の空白 |
+| `detailMinWidth` | `8` | 右に寄せる部分がこれより狭くしか入らないときは出さない |
+| `detailHighlight` | `"Comment"` | 色を持たない右に寄せる部分の色 |
+
+pum.vim は、`min_width`・`max_width` に合わせて表示を広げたり切り詰めたりする前の幅で色の位置を計算するので、色がずれる。この 2 つは設定せず、pum.vim の `max_columns.abbr` を `abbrMaxWidth` と同じ値にする (表示はこの UI が切り詰める)。
+
 ## 仕組み
 
 ソースは Lua の中で動き、Go はそれを非同期に待つ:
@@ -143,6 +162,10 @@ done({source, bufnr, request, index})   (返事は無い)
 ```
 
 `goda_cmp_luasrc` には補助の関数もある。`convert()` は LSP の `CompletionItem` を候補に変え、`info()` はその Markdown を作り、`remember()` / `entry()` は resolve と確定に使う元のデータを持っておく。`nvimlsp.lua` と `blink.lua` が例になる。
+
+## デモ
+
+`demo/record.sh` は、最小の設定 (`demo/init.lua`、`demo/config`) で UI luasrcpum のデモを録画する。Neovim と gopls を使い、プラグインは自分で取得して、`demo/sample/main.go` に打ち込む。asciinema、agg、ffmpeg が要る。出力は `demo/out/`。
 
 ## ライセンス
 
