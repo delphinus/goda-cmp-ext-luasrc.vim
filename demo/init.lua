@@ -20,8 +20,11 @@ end
 vim.opt.rtp:prepend(repo)
 
 -- Not asked to the terminal: the recording terminal does not answer.
-vim.o.background = "dark"
+vim.o.background = vim.env.GODA_DEMO_BACKGROUND or "light"
 vim.o.swapfile = false
+-- Bundled with Neovim 0.12 and later: Catppuccin Latte with a light background
+-- (Mocha with a dark one).
+pcall(vim.cmd.colorscheme, vim.env.GODA_DEMO_COLORSCHEME or "catppuccin")
 vim.o.termguicolors = true
 vim.o.number = true
 vim.o.signcolumn = "no"

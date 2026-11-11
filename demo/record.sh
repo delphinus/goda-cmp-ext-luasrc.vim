@@ -27,7 +27,8 @@ nvim --headless -u demo/init.lua -i NONE -c 'call goda_cmp#build()' -c qa
 GODA_DEMO_DRIVE=1 asciinema rec --overwrite -q --window-size 120x18 \
 	-c "nvim -u demo/init.lua -i NONE demo/sample/main.go" demo/out/luasrcpum.cast
 # The demo file is typed into; the recording quits without writing it. Drop
-# the quitting (the screen cleared) from the end.
+# the quitting (the screen cleared) from the end, and pass over the startup
+# (before the colorscheme) in no time.
 python3 - demo/out/luasrcpum.cast <<'PY2'
 import json, sys
 lines = open(sys.argv[1]).read().splitlines()
@@ -36,9 +37,16 @@ for i, e in enumerate(events):
     if e[1] == "o" and "\x1b[?1049l" in e[2]:
         events = events[:i]
         break
+for e in events:
+    e[0] = 0
+    if e[1] == "o" and "package" in e[2]:
+        break
 open(sys.argv[1], "w").write("\n".join([head] + [json.dumps(e) for e in events]) + "\n")
 PY2
-agg ${AGG_FONT:+--font-family "$AGG_FONT"} --font-size 20 --last-frame-duration 2 \
+# The terminal colors of agg are those of Catppuccin Latte, as the colorscheme
+# of demo/init.lua.
+latte=eff1f5,4c4f69,5c5f77,d20f39,40a02b,df8e1d,1e66f5,ea76cb,179299,acb0be,6c6f85,d20f39,40a02b,df8e1d,1e66f5,ea76cb,179299,bcc0cc
+agg ${AGG_FONT:+--font-family "$AGG_FONT"} --theme "$latte" --font-size 20 --last-frame-duration 2 \
 	demo/out/luasrcpum.cast demo/out/luasrcpum.gif
 ffmpeg -y -loglevel error -i demo/out/luasrcpum.gif -movflags +faststart -pix_fmt yuv420p \
 	-vf 'scale=trunc(iw/2)*2:trunc(ih/2)*2' demo/out/luasrcpum.mp4
