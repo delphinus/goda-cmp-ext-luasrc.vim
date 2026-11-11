@@ -2,7 +2,7 @@
 -- side is package luasrc).
 --
 -- Sends textDocument/completion to the LSP clients of Neovim and returns the
--- reply to Go. The lsp source bundled with goda-cmp starts the servers by
+-- reply to Go. The lsp source of goda-cmp-ext starts the servers by
 -- itself, so two of each server run with those of Neovim, and the settings
 -- have to be written again in Go. This one uses the clients Neovim attached,
 -- so one server is enough, and the settings of vim.lsp.config() apply as they

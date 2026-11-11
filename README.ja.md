@@ -3,7 +3,7 @@
 [English](README.md)
 
 > [!WARNING]
-> β版 (v0.0.x) です。goda-cmp.vim 自体が開発の途中で、同梱の拡張を別のリポジトリへ移す作業も進んでいるため、API・import のパス・このリポジトリの名前が変わることがあります。
+> β版 (v0.0.x) です。goda-cmp.vim 自体が開発の途中のため、API・import のパス・このリポジトリの名前が変わることがあります。
 
 https://github.com/user-attachments/assets/4f6cc85f-eae6-4c5d-a911-93a10b816287
 
@@ -20,7 +20,7 @@ Lua のモジュールが 2 つ付いている:
 
 - Neovim 0.11 以降
 - goda.vim と goda-cmp.vim、設定をビルドする Go
-- [pum.vim](https://github.com/Shougo/pum.vim): `preview.lua` が描くプレビューに使う (任意)
+- [pum.vim](https://github.com/Shougo/pum.vim): `preview.lua` が描くプレビューに使う (任意)。UI luasrcpum には、あわせて [goda-cmp-ui-pum.vim](https://github.com/Shougo/goda-cmp-ui-pum.vim) が要る
 - [colorful-menu.nvim](https://github.com/xzbdmw/colorful-menu.nvim): LSP の候補の表示に使う (任意)
 
 ## インストール
@@ -74,7 +74,7 @@ func main() {
 
 ### nvimlsp
 
-バッファの LSP クライアントに `textDocument/completion` を送る。goda-cmp 同梱の lsp ソースはサーバを自分で起動するが、こちらは Neovim がアタッチしたクライアントを使うので:
+バッファの LSP クライアントに `textDocument/completion` を送る。goda-cmp-ext の lsp ソースはサーバを自分で起動するが、こちらは Neovim がアタッチしたクライアントを使うので:
 
 - サーバは 2 本でなく 1 本だけ動く。
 - `vim.lsp.config()` の設定がそのまま使われる。
@@ -125,7 +125,7 @@ require("goda_cmp_luasrc.blink").setup {
 
 ### UI luasrcpum
 
-goda-cmp.vim に同梱の UI は色を描かない。`ext/ui/luasrcpum` は、UI "pum" と同じく pum.vim で候補を出し、加えて `luasrc.Ref` の中身を描く UI。colorful-menu.nvim の色を付けた表示と、右に寄せたシグネチャや型を出す。ほかのソースの候補は UI "pum" と同じに出し、選択・確定・プレビューは UI "pum" に任せる。
+goda-cmp.vim の UI (goda-cmp-ui-pum.vim など) は色を描かない。`ext/ui/luasrcpum` は、UI "pum" と同じく pum.vim で候補を出し、加えて `luasrc.Ref` の中身を描く UI。colorful-menu.nvim の色を付けた表示と、右に寄せたシグネチャや型を出す。ほかのソースの候補は UI "pum" と同じに出し、選択・確定・プレビューは UI "pum" に任せる。
 
 ```go
 b.AddUI(luasrcpum.New())

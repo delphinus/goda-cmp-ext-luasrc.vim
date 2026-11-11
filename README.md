@@ -3,8 +3,7 @@
 [日本語](README.ja.md)
 
 > [!WARNING]
-> This is a beta (v0.0.x). goda-cmp.vim itself is under active development,
-> and its bundled extensions are being moved into repositories of their own, so
+> This is a beta (v0.0.x). goda-cmp.vim itself is under active development, so
 > the API, the import paths and even the name of this repository may change.
 
 https://github.com/user-attachments/assets/4f6cc85f-eae6-4c5d-a911-93a10b816287
@@ -25,7 +24,9 @@ Two Lua modules come with it:
 - Neovim 0.11 or newer
 - goda.vim and goda-cmp.vim, and Go to build your configuration
 - [pum.vim](https://github.com/Shougo/pum.vim) for the preview drawn by
-  `preview.lua` (optional)
+  `preview.lua` (optional), and with
+  [goda-cmp-ui-pum.vim](https://github.com/Shougo/goda-cmp-ui-pum.vim) for the
+  UI luasrcpum
 - [colorful-menu.nvim](https://github.com/xzbdmw/colorful-menu.nvim) for the
   labels of LSP candidates (optional)
 
@@ -86,7 +87,7 @@ module `module`. One module may serve several sources: it is given the name.
 ### nvimlsp
 
 Sends `textDocument/completion` to the LSP clients of the buffer. The lsp
-source bundled with goda-cmp starts the servers by itself; this one uses the
+source of goda-cmp-ext starts the servers by itself; this one uses the
 clients Neovim attached, so
 
 - one server runs, not two,
@@ -152,7 +153,8 @@ for a UI that lays them out and colors them.
 
 ### The UI luasrcpum
 
-The UIs bundled with goda-cmp.vim do not draw highlights. `ext/ui/luasrcpum`
+The UIs of goda-cmp.vim (goda-cmp-ui-pum.vim and the others) do not draw
+highlights. `ext/ui/luasrcpum`
 is a UI that shows candidates with pum.vim as the UI "pum" does, and also
 draws what is in `luasrc.Ref`: the label with the highlights of
 colorful-menu.nvim, and the signature or type aligned to the right. Candidates

@@ -1,6 +1,6 @@
 -- A minimal Neovim configuration for the demo: goda.vim, goda-cmp.vim,
--- pum.vim and colorful-menu.nvim from $GODA_DEMO_PLUGINS, this checkout, and
--- gopls. Run by demo/record.sh:
+-- goda-cmp-ui-pum.vim, goda-cmp-ext, pum.vim and colorful-menu.nvim from
+-- $GODA_DEMO_PLUGINS, this checkout, and gopls. Run by demo/record.sh:
 --
 --   nvim -u demo/init.lua -i NONE demo/sample/main.go
 --
@@ -13,7 +13,7 @@ local repo = vim.fn.fnamemodify(demo, ":h")
 local plugins = assert(vim.env.GODA_DEMO_PLUGINS, "set GODA_DEMO_PLUGINS")
 local cache = vim.env.GODA_DEMO_CACHE or (plugins .. "/../cache")
 
-local names = { "goda.vim", "goda-cmp.vim", "pum.vim", "colorful-menu.nvim" }
+local names = { "goda.vim", "goda-cmp.vim", "goda-cmp-ui-pum.vim", "goda-cmp-ext", "pum.vim", "colorful-menu.nvim" }
 for _, name in ipairs(names) do
   vim.opt.rtp:prepend(plugins .. "/" .. name)
 end
@@ -33,7 +33,13 @@ vim.o.ruler = false
 vim.o.showmode = false
 
 -- Build with the plugins above and this checkout (go.work).
-vim.g["goda#workspace"] = { plugins .. "/goda.vim", plugins .. "/goda-cmp.vim", repo }
+vim.g["goda#workspace"] = {
+  plugins .. "/goda.vim",
+  plugins .. "/goda-cmp.vim",
+  plugins .. "/goda-cmp-ui-pum.vim",
+  plugins .. "/goda-cmp-ext",
+  repo,
+}
 vim.g["goda_cmp#config_dir"] = demo .. "/config"
 vim.g["goda_cmp#binary"] = cache .. "/goda-cmp"
 

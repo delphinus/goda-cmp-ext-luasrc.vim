@@ -1,5 +1,5 @@
 // Package luasrcpum is a UI that shows candidates with pum.vim, as the UI
-// "pum" bundled with goda-cmp.vim does, and also draws what the luasrc
+// "pum" of goda-cmp-ui-pum.vim does, and also draws what the luasrc
 // sources put in the UserData of their candidates (luasrc.Ref): the detail
 // (a signature, a type) aligned to the right of the label, and the highlights
 // that colorful-menu.nvim gives the label and the detail.
@@ -19,8 +19,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/Shougo/goda-cmp-ui-pum.vim/ext/ui/pum"
 	"github.com/Shougo/goda-cmp.vim/cmp"
-	"github.com/Shougo/goda-cmp.vim/ext/ui/pum"
 	"github.com/Shougo/goda.vim/sdk"
 	"golang.org/x/text/width"
 

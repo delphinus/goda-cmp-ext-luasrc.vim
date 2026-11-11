@@ -3,8 +3,8 @@
 package main
 
 import (
+	"github.com/Shougo/goda-cmp-ext/ext/filter/matcherhead"
 	"github.com/Shougo/goda-cmp.vim/cmp"
-	"github.com/Shougo/goda-cmp.vim/ext/filter/matcherhead"
 
 	"github.com/delphinus/goda-cmp-ext-luasrc.vim/ext/source/luasrc"
 	"github.com/delphinus/goda-cmp-ext-luasrc.vim/ext/ui/luasrcpum"

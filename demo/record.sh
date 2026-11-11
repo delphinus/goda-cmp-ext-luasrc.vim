@@ -3,8 +3,9 @@
 # .mp4). Needs nvim, go, gopls, git, asciinema, agg and ffmpeg, and the Go
 # parser of treesitter (see demo/init.lua).
 #
-#   GODA_DEMO_PLUGINS  directory of goda.vim, goda-cmp.vim, pum.vim and
-#                      colorful-menu.nvim (cloned there when missing)
+#   GODA_DEMO_PLUGINS  directory of goda.vim, goda-cmp.vim, goda-cmp-ui-pum.vim,
+#                      goda-cmp-ext, pum.vim and colorful-menu.nvim (cloned
+#                      there when missing)
 #   AGG_FONT           font family for agg
 set -eu
 for c in nvim go gopls git asciinema agg ffmpeg; do
@@ -14,7 +15,8 @@ cd "$(dirname "$0")/.."
 dir=${GODA_DEMO_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/goda-cmp-ext-luasrc-demo}
 plugins=${GODA_DEMO_PLUGINS:-$dir/plugins}
 mkdir -p "$plugins" "$dir/cache" demo/out
-for repo in Shougo/goda.vim Shougo/goda-cmp.vim Shougo/pum.vim xzbdmw/colorful-menu.nvim; do
+for repo in Shougo/goda.vim Shougo/goda-cmp.vim Shougo/goda-cmp-ui-pum.vim Shougo/goda-cmp-ext Shougo/pum.vim \
+	xzbdmw/colorful-menu.nvim; do
 	d=$plugins/${repo#*/}
 	[ -d "$d" ] || git clone -q --depth 1 "https://github.com/$repo" "$d"
 done
