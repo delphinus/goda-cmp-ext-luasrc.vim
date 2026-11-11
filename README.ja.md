@@ -5,6 +5,10 @@
 > [!WARNING]
 > β版 (v0.0.x) です。goda-cmp.vim 自体が開発の途中で、同梱の拡張を別のリポジトリへ移す作業も進んでいるため、API・import のパス・このリポジトリの名前が変わることがあります。
 
+https://github.com/user-attachments/assets/4f6cc85f-eae6-4c5d-a911-93a10b816287
+
+*nvimlsp のソースで gopls の候補を、UI luasrcpum と colorful-menu.nvim で出したところ (`demo/record.sh` で録画)。*
+
 候補を Lua のモジュールに頼む [goda-cmp.vim](https://github.com/Shougo/goda-cmp.vim) のソース。Neovim 専用。
 
 Lua のモジュールが 2 つ付いている:

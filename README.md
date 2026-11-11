@@ -7,6 +7,10 @@
 > and its bundled extensions are being moved into repositories of their own, so
 > the API, the import paths and even the name of this repository may change.
 
+https://github.com/user-attachments/assets/4f6cc85f-eae6-4c5d-a911-93a10b816287
+
+*gopls through the nvimlsp source, shown with the UI luasrcpum and colorful-menu.nvim (recorded with `demo/record.sh`).*
+
 A source for [goda-cmp.vim](https://github.com/Shougo/goda-cmp.vim) that asks a
 Lua module for the candidates. Neovim only.
 
