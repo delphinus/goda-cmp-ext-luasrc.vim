@@ -10,35 +10,18 @@ local M = {}
 
 local protocol = vim.lsp.protocol
 
--- Request id -> reply. Go comes to take() it (package luasrc explains why).
--- forgotten holds the ids of the requests Go stopped waiting for.
-local replies = {}
-local forgotten = {}
-
+--- Sends the reply to the request id to Go (the plugin "luasrc", package
+--- luasrc explains how). A reply Go stopped waiting for is dropped there.
+---@param id integer
 function M.reply(id, payload)
-  if forgotten[id] then
-    forgotten[id] = nil
-    return
+  local function send()
+    vim.fn["goda#notify"]("luasrc", "reply", id, payload)
   end
-  replies[id] = payload
-end
-
---- Hands the reply over, or nil if it has not come yet.
----@param id integer
-function M.take(id)
-  local payload = replies[id]
-  replies[id] = nil
-  return payload
-end
-
---- Drops the reply to a request Go stopped waiting for. If it has not come
---- yet, it is dropped when it comes.
----@param id integer
-function M.forget(id)
-  if replies[id] ~= nil then
-    replies[id] = nil
+  -- A source may call back in a fast event, where Vim functions cannot run.
+  if vim.in_fast_event() then
+    vim.schedule(send)
   else
-    forgotten[id] = true
+    send()
   end
 end
 
