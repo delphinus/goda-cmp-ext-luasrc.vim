@@ -7,16 +7,14 @@
 // asynchronously in this order:
 //
 //  1. Gather calls complete() of the Lua module with Notify.
-//  2. Lua gathers the candidates and leaves the reply on the Lua side
-//     (reply() of lua/goda_cmp_luasrc/init.lua).
-//  3. Gather calls take() with Call until the reply is there.
+//  2. Lua gathers the candidates and sends the reply with goda#notify() to
+//     the plugin "luasrc" (Bridge), which hands it to Gather.
 //
-// Lua does not send the reply with goda#notify(), because goda.vim (since
-// v0.4.2) makes the notifications and requests from the editor wait until the
-// previous notifications are done. The complete of goda-cmp may wait for the
-// sources in the handler of a notification, so a reply sent after it would
-// not arrive until complete is over, and the completion would stall until the
-// timeout. A Call from this side does not get in that line.
+// goda.vim handles the notifications of the editor one after the other, so
+// the reply waits for the notifications sent before it. None of goda-cmp
+// waits for a source in the handler of a notification (since v0.4.1, select
+// resolves after its notification is handled, as complete gathers), so the
+// reply is not held up.
 //
 // The original data of the candidates (needed to resolve and confirm them)
 // stays on the Lua side; this side keeps only (the request id, the index).
@@ -35,38 +33,52 @@ import (
 	"regexp"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/Shougo/goda-cmp.vim/cmp"
 	"github.com/Shougo/goda.vim/sdk"
 )
 
 // Bridge is the plugin "luasrc", used to make the sources and passed to
-// b.Main() too. It numbers the requests.
+// b.Main() too: the replies of Lua come to it. It numbers the requests.
 type Bridge struct {
 	mu     sync.Mutex
 	nextID int64
+	// waiting is the request id -> where to hand its reply, while call
+	// waits for it.
+	waiting map[int64]chan any
 }
 
 // NewBridge makes a Bridge.
 func NewBridge() *Bridge {
-	return &Bridge{}
+	return &Bridge{waiting: map[int64]chan any{}}
 }
 
 // Name is the name of the plugin.
 func (*Bridge) Name() string { return "luasrc" }
 
-// Handlers is empty: this side goes to take the replies (call).
-func (*Bridge) Handlers() map[string]sdk.Handler {
-	return map[string]sdk.Handler{}
+// Handlers has reply, which Lua sends the replies to.
+func (b *Bridge) Handlers() map[string]sdk.Handler {
+	return map[string]sdk.Handler{"reply": b.reply}
 }
 
-// pollInterval is how often to look whether a reply is on the Lua side.
-const pollInterval = 5 * time.Millisecond
-
-// luasrcModule is the Lua module keeping the replies
-// (lua/goda_cmp_luasrc/init.lua).
-const luasrcModule = "goda_cmp_luasrc"
+// reply hands the reply (id, payload) to the call waiting for it. The reply
+// to a request call stopped waiting for (on the timeout, etc.) is dropped.
+func (b *Bridge) reply(_ context.Context, _ sdk.Host, params []any) (any, error) {
+	var id int64
+	var payload any
+	if err := sdk.DecodeArgs(params, &id, &payload); err != nil {
+		return nil, fmt.Errorf("luasrc.reply needs (id, payload): %w", err)
+	}
+	b.mu.Lock()
+	ch, ok := b.waiting[id]
+	delete(b.waiting, id)
+	b.mu.Unlock()
+	if ok {
+		// Buffered: call may have stopped waiting meanwhile.
+		ch <- payload
+	}
+	return nil, nil
+}
 
 // The Lua modules bundled with this plugin, to pass to Bridge.Source.
 const (
@@ -80,39 +92,27 @@ const (
 // call passes args to the function fn of the Lua module module, and puts its
 // reply into dst.
 func (b *Bridge) call(ctx context.Context, h sdk.Host, module, fn string, args map[string]any, dst any) error {
+	ch := make(chan any, 1)
 	b.mu.Lock()
 	b.nextID++
 	id := b.nextID
+	b.waiting[id] = ch
 	b.mu.Unlock()
+	defer func() {
+		b.mu.Lock()
+		delete(b.waiting, id)
+		b.mu.Unlock()
+	}()
 
 	args["id"] = id
 	if err := notify(ctx, h, module, fn, args); err != nil {
 		return err
 	}
-	// When it stops waiting (on the timeout, etc.), have the late reply
-	// dropped. ctx is over, so it is not used.
-	forget := func() {
-		_ = h.Notify(context.Background(), "luaeval", fmt.Sprintf("require'%s'.forget(_A)", luasrcModule), id)
-	}
-	ticker := time.NewTicker(pollInterval)
-	defer ticker.Stop()
-	for {
-		// Notify runs before the next Call, so take() never comes before
-		// complete() is called.
-		v, err := h.Call(ctx, "luaeval", fmt.Sprintf("require'%s'.take(_A)", luasrcModule), id)
-		if err != nil {
-			forget()
-			return err
-		}
-		if v != nil {
-			return sdk.Decode(v, dst)
-		}
-		select {
-		case <-ticker.C:
-		case <-ctx.Done():
-			forget()
-			return ctx.Err()
-		}
+	select {
+	case v := <-ch:
+		return sdk.Decode(v, dst)
+	case <-ctx.Done():
+		return ctx.Err()
 	}
 }
 

@@ -22,7 +22,8 @@ Two Lua modules come with it:
 ## Requirements
 
 - Neovim 0.11 or newer
-- goda.vim and goda-cmp.vim, and Go to build your configuration
+- goda.vim and goda-cmp.vim (v0.4.1 or newer), and Go to build your
+  configuration
 - [pum.vim](https://github.com/Shougo/pum.vim) for the preview drawn by
   `preview.lua` (optional), and with
   [goda-cmp-ui-pum.vim](https://github.com/Shougo/goda-cmp-ui-pum.vim) for the
@@ -184,13 +185,12 @@ shift. Leave those unset, and set `max_columns.abbr` of pum.vim to
 The sources run in Lua, and Go waits for them asynchronously:
 
 1. `Gather` calls `complete()` of the Lua module with Notify.
-2. Lua gathers the candidates and leaves the reply on the Lua side.
-3. `Gather` calls `take()` with Call until the reply is there.
+2. Lua gathers the candidates and sends the reply with `goda#notify()` to the
+   plugin `luasrc` (the bridge), which hands it to `Gather`.
 
-Lua does not send the reply with `goda#notify()`, because goda.vim handles the
-notifications from the editor in order, and goda-cmp may wait for the sources
-in the handler of a notification: the reply would not arrive until then. A
-Call from the Go side does not get in that line.
+goda.vim handles the notifications from the editor in order, so the reply
+waits for those sent before it. goda-cmp waits for no source in the handler of
+a notification (since v0.4.1), so it is not held up.
 
 The original data of the candidates stays on the Lua side; Go keeps only the
 request id and the index.

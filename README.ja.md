@@ -19,7 +19,7 @@ Lua のモジュールが 2 つ付いている:
 ## 必要なもの
 
 - Neovim 0.11 以降
-- goda.vim と goda-cmp.vim、設定をビルドする Go
+- goda.vim と goda-cmp.vim (v0.4.1 以降)、設定をビルドする Go
 - [pum.vim](https://github.com/Shougo/pum.vim): `preview.lua` が描くプレビューに使う (任意)。UI luasrcpum には、あわせて [goda-cmp-ui-pum.vim](https://github.com/Shougo/goda-cmp-ui-pum.vim) が要る
 - [colorful-menu.nvim](https://github.com/xzbdmw/colorful-menu.nvim): LSP の候補の表示に使う (任意)
 
@@ -147,10 +147,9 @@ pum.vim は、`min_width`・`max_width` に合わせて表示を広げたり切�
 ソースは Lua の中で動き、Go はそれを非同期に待つ:
 
 1. `Gather` が Lua のモジュールの `complete()` を Notify で呼ぶ。
-2. Lua が候補を集め、返事を Lua の側に置く。
-3. `Gather` は、返事が置かれるまで `take()` を Call で呼ぶ。
+2. Lua が候補を集め、返事を `goda#notify()` でプラグイン `luasrc` (ブリッジ) に送り、ブリッジがそれを `Gather` に渡す。
 
-Lua から `goda#notify()` で返事を送らないのは、goda.vim がエディタからの通知を順に処理し、goda-cmp が通知のハンドラの中でソースを待つことがあるため。そのあいだは返事が届かない。Go の側からの Call は、その順番に並ばない。
+goda.vim はエディタからの通知を順に処理するので、返事はそれより前に送られた通知を待つ。goda-cmp は通知のハンドラの中でソースを待たない (v0.4.1 以降) ので、返事が待たされることはない。
 
 候補の元のデータは Lua の側に置いたままにし、Go は要求の id と何番目かだけを持つ。
 
