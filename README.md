@@ -19,6 +19,23 @@ Two Lua modules come with it:
 - **blink** calls sources written for [blink.cmp](https://github.com/saghen/blink.cmp)
   without setting blink.cmp up.
 
+## Other LSP sources
+
+Two other sources complete from language servers:
+
+| | nvimlsp (this plugin) | [airRnot1106/goda-cmp-source-nvimlsp](https://github.com/airRnot1106/goda-cmp-source-nvimlsp) | `lsp` of [goda-cmp-ext](https://github.com/Shougo/goda-cmp-ext) |
+|---|---|---|---|
+| Servers | the clients Neovim attached | the clients Neovim attached | started by the source itself, configured in Go |
+| Editor | Neovim 0.11 or newer | Neovim nightly (0.13) | Vim and Neovim |
+| Installation | plugin manager and Go module (it has Lua modules) | Go module only (its Lua is embedded in the binary) | Go module |
+| Snippets | not expanded: placeholders become their text | expanded with `vim.snippet` | not expanded |
+| `completionItem/resolve`, `additionalTextEdits` | always | when enabled by parameters | always |
+| Besides | the blink module; colorful-menu.nvim and the UI luasrcpum | | |
+
+Choose this one for the sources of blink.cmp or the labels of
+colorful-menu.nvim, airRnot1106/goda-cmp-source-nvimlsp to expand snippets,
+and the `lsp` source for Vim.
+
 ## Requirements
 
 - Neovim 0.11 or newer

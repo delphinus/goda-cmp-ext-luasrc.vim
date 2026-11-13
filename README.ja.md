@@ -16,6 +16,21 @@ Lua のモジュールが 2 つ付いている:
 - **nvimlsp**: Neovim がアタッチした LSP クライアントに頼む。
 - **blink**: [blink.cmp](https://github.com/saghen/blink.cmp) 用に書かれたソースを、blink.cmp を設定せずに呼ぶ。
 
+## ほかの LSP のソース
+
+言語サーバから補完するソースは、ほかに 2 つある:
+
+| | nvimlsp (このプラグイン) | [airRnot1106/goda-cmp-source-nvimlsp](https://github.com/airRnot1106/goda-cmp-source-nvimlsp) | [goda-cmp-ext](https://github.com/Shougo/goda-cmp-ext) の `lsp` |
+|---|---|---|---|
+| サーバ | Neovim がアタッチしたクライアント | Neovim がアタッチしたクライアント | ソースが自分で起動する。設定は Go に書く |
+| エディタ | Neovim 0.11 以降 | Neovim nightly (0.13) | Vim と Neovim |
+| インストール | プラグインマネージャと Go のモジュール (Lua のモジュールを含むため) | Go のモジュールだけ (Lua はバイナリに埋め込まれている) | Go のモジュール |
+| スニペット | 展開しない。プレースホルダはその文字列になる | `vim.snippet` で展開する | 展開しない |
+| `completionItem/resolve`、`additionalTextEdits` | 常に行う | パラメータで有効にしたとき | 常に行う |
+| その他 | blink のモジュール。colorful-menu.nvim と UI luasrcpum | | |
+
+blink.cmp のソースや colorful-menu.nvim のラベルを使うならこのプラグイン、スニペットを展開したいなら airRnot1106/goda-cmp-source-nvimlsp、Vim で使うなら `lsp` のソースが向いている。
+
 ## 必要なもの
 
 - Neovim 0.11 以降
