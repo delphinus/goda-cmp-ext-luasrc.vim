@@ -2,9 +2,9 @@
 
 [日本語](README.ja.md)
 
-> [!WARNING]
-> This is a beta (v0.0.x). goda-cmp.vim itself is under active development, so
-> the API, the import paths and even the name of this repository may change.
+> [!NOTE]
+> goda-cmp.vim itself is under active development, so the API of this plugin
+> may change to follow it.
 
 https://github.com/user-attachments/assets/4f6cc85f-eae6-4c5d-a911-93a10b816287
 

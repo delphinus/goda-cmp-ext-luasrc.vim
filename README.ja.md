@@ -2,8 +2,8 @@
 
 [English](README.md)
 
-> [!WARNING]
-> β版 (v0.0.x) です。goda-cmp.vim 自体が開発の途中のため、API・import のパス・このリポジトリの名前が変わることがあります。
+> [!NOTE]
+> goda-cmp.vim 自体が開発の途中のため、それに合わせてこのプラグインの API も変わることがあります。
 
 https://github.com/user-attachments/assets/4f6cc85f-eae6-4c5d-a911-93a10b816287
 
