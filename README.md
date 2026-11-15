@@ -43,8 +43,8 @@ and the `lsp` source for Vim.
   configuration
 - [pum.vim](https://github.com/Shougo/pum.vim) for the preview drawn by
   `preview.lua` (optional), and with
-  [goda-cmp-ui-pum.vim](https://github.com/Shougo/goda-cmp-ui-pum.vim) for the
-  UI luasrcpum
+  [goda-cmp-ui-pum.vim](https://github.com/Shougo/goda-cmp-ui-pum.vim) (fd4b187
+  or newer) for the UI luasrcpum
 - [colorful-menu.nvim](https://github.com/xzbdmw/colorful-menu.nvim) for the
   labels of LSP candidates (optional)
 

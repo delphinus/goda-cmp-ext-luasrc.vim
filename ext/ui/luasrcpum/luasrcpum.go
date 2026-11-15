@@ -17,7 +17,6 @@ import (
 	"context"
 	"encoding/json"
 	"strings"
-	"sync"
 
 	"github.com/Shougo/goda-cmp-ui-pum.vim/ext/ui/pum"
 	"github.com/Shougo/goda-cmp.vim/cmp"
@@ -65,19 +64,6 @@ func (p Params) withDefaults() Params {
 type ui struct {
 	p     Params
 	inner cmp.UI
-	infos *infos
-}
-
-// infos is the info handed to pum.vim per candidate.
-//
-// The UI "pum" calls pum#update_current_item() on every UpdateInfo, even when
-// the info has not changed. That fires PumCompleteChanged, which goda-cmp
-// takes for selecting the item again, resolving it and updating its info
-// again: selecting a candidate of a source with Resolve never stops. An info
-// that has not changed is not handed on.
-type infos struct {
-	mu    sync.Mutex
-	byRef map[string]string
 }
 
 // New returns the UI, named "luasrcpum". The parameters may be given (at most
@@ -87,11 +73,11 @@ func New(p ...Params) cmp.UI {
 	if len(p) > 0 {
 		np = p[0]
 	}
-	return newUI(np, &infos{byRef: map[string]string{}})
+	return newUI(np)
 }
 
-func newUI(p Params, in *infos) ui {
-	return ui{p: p, inner: pum.New(pum.Params{Insert: p.Insert}), infos: in}
+func newUI(p Params) ui {
+	return ui{p: p, inner: pum.New(pum.Params{Insert: p.Insert})}
 }
 
 func (ui) Name() string { return "luasrcpum" }
@@ -102,7 +88,7 @@ func (u ui) WithParams(p cmp.Params) (any, error) {
 	if err != nil {
 		return nil, err
 	}
-	return newUI(np, u.infos), nil
+	return newUI(np), nil
 }
 
 // highlight is one of the highlights of a pum.vim item. col is the byte
@@ -122,12 +108,6 @@ func hl(group string, start, end int) highlight {
 
 func (u ui) Show(ctx context.Context, h sdk.Host, r cmp.ShowRequest) error {
 	p := u.p.withDefaults()
-	u.infos.mu.Lock()
-	clear(u.infos.byRef)
-	for _, it := range r.Items {
-		u.infos.byRef[it.Ref] = it.Info
-	}
-	u.infos.mu.Unlock()
 	w := abbrWidth(r.Items, p)
 	items := make([]any, len(r.Items))
 	for i, it := range r.Items {
@@ -297,13 +277,6 @@ func (u ui) Visible(ctx context.Context, h sdk.Host) (bool, error) {
 }
 
 func (u ui) UpdateInfo(ctx context.Context, h sdk.Host, it cmp.Item) error {
-	u.infos.mu.Lock()
-	same := u.infos.byRef[it.Ref] == it.Info
-	u.infos.byRef[it.Ref] = it.Info
-	u.infos.mu.Unlock()
-	if same {
-		return nil
-	}
 	return u.inner.(cmp.InfoUpdater).UpdateInfo(ctx, h, it)
 }
 

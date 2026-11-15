@@ -35,7 +35,7 @@ blink.cmp のソースや colorful-menu.nvim のラベルを使うならこの�
 
 - Neovim 0.11 以降
 - goda.vim と goda-cmp.vim (v0.4.1 以降)、設定をビルドする Go
-- [pum.vim](https://github.com/Shougo/pum.vim): `preview.lua` が描くプレビューに使う (任意)。UI luasrcpum には、あわせて [goda-cmp-ui-pum.vim](https://github.com/Shougo/goda-cmp-ui-pum.vim) が要る
+- [pum.vim](https://github.com/Shougo/pum.vim): `preview.lua` が描くプレビューに使う (任意)。UI luasrcpum には、あわせて [goda-cmp-ui-pum.vim](https://github.com/Shougo/goda-cmp-ui-pum.vim) (fd4b187 以降) が要る
 - [colorful-menu.nvim](https://github.com/xzbdmw/colorful-menu.nvim): LSP の候補の表示に使う (任意)
 
 ## インストール
